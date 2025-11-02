@@ -1,10 +1,16 @@
 import Colors from "@/constants/Colors";
 import { STRING_CONSTANTS } from "@/constants/strings";
 import { defaultStyles } from "@/constants/Styles";
-import { Link } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
 import { KeyboardAvoidingView, Platform, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
-//dummy push
+
+enum SignInType {
+    Phone,
+    Email,
+    Apple,
+    Google
+}
 const LoginPage = () => {
   const [form, setForm] = useState({
     countryCode: "+91",
@@ -12,17 +18,19 @@ const LoginPage = () => {
   });
   const keyboardVeritalOffset = Platform.OS == 'ios' ? 90 : 0;
 
-  const onSignUp = async () => {
+  const onSignIn = async (type: SignInType) => {
+    if(type === SignInType.Phone) {
 
+    }
   }
 
   return (
 
     <KeyboardAvoidingView style = {{flex : 1}} behavior="padding" keyboardVerticalOffset={keyboardVeritalOffset}>
     <View style={defaultStyles.container}>
-      <Text style={defaultStyles.header}>{STRING_CONSTANTS.signup_header}</Text>
+      <Text style={defaultStyles.header}>{STRING_CONSTANTS.signin_header}</Text>
       <Text style={defaultStyles.descriptionText}>
-        {STRING_CONSTANTS.signup_header2}
+        {STRING_CONSTANTS.signin_header2}
       </Text>
       <View className="my-10 flex-row">
         <TextInput
@@ -41,13 +49,7 @@ const LoginPage = () => {
           onChangeText={(e) => setForm((prev) => ({ ...prev, phoneNumber: e }))}
         />
       </View>
-      <Link href={"/login"} replace asChild>
-        <Pressable>
-          <Text style={defaultStyles.textLink}>
-            {STRING_CONSTANTS.account_exists}
-          </Text>
-        </Pressable>
-      </Link>
+     
 
     <View style = {{flex: 1}} />
       <Pressable
@@ -58,10 +60,32 @@ const LoginPage = () => {
             marginBottom: 20,
           },
         ]}
-        onPress={onSignUp}
+        onPress={(e) => onSignIn(e)}
       >
-        <Text style={defaultStyles.buttonText}>{STRING_CONSTANTS.sign_up}</Text>
+        <Text style={defaultStyles.buttonText}>{STRING_CONSTANTS.continue_label}</Text>
       </Pressable>
+
+      <View style = {styles.container}>
+        <View style = {styles.divider}></View>
+        <Text style = {styles.text}>or</Text>
+        <View style = {styles.divider}></View>
+      </View>
+    
+
+    <Pressable style = {[defaultStyles.pillButton, {flexDirection: 'row', gap: 16, marginTop: 20, backgroundColor: 'white'}]}>
+        <Ionicons name="mail" size={24} color={'#000'} />
+        <Text style={[defaultStyles.buttonText, { color: '#000'}]}>{STRING_CONSTANTS.continue_with_email('email')}</Text>
+    </Pressable>
+
+    <Pressable style = {[defaultStyles.pillButton, {flexDirection: 'row', gap: 16, marginTop: 20, backgroundColor: 'white'}]}>
+        <Ionicons name="logo-google" size={24} color={'#000'} />
+        <Text style={[defaultStyles.buttonText, { color: '#000'}]}>{STRING_CONSTANTS.continue_with_email('email')}</Text>
+    </Pressable>
+
+    <Pressable style = {[defaultStyles.pillButton, {flexDirection: 'row', gap: 16, marginTop: 20, backgroundColor: 'white'}]}>
+        <Ionicons name="logo-apple" size={24} color={'#000'} />
+        <Text style={[defaultStyles.buttonText, { color: '#000'}]}>{STRING_CONSTANTS.continue_with_email('email')}</Text>
+    </Pressable>
     </View>
     </KeyboardAvoidingView>
   );
@@ -75,12 +99,26 @@ const styles = StyleSheet.create({
     fontSize: 20,
     marginRight: 10,
   },
+  container: {
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    gap:16
+  },
   enabled: {
     backgroundColor: Colors.primary,
   },
   disabled: {
     backgroundColor: Colors.primaryMuted,
   },
+  divider: {
+    flex : 1, 
+    height: StyleSheet.hairlineWidth, 
+    backgroundColor: 'grey'
+  },
+  text: {
+    color: Colors.gray, 
+    fontSize: 20 
+  }
 });
 
 export default LoginPage;
