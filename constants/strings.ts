@@ -10,4 +10,6 @@ account_exists: 'Already have an account? Log in',
 sign_up: 'Sign Up',
 continue_label: 'Continue',
 continue_with_email: (e) => `Continue with ${e}`,
+six_digit_code: '6 Digit Code',
+code_sent: (ph) => `Code sent to ${ph} unless you already have an account.`
 }

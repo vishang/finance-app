@@ -1,7 +1,9 @@
 import Colors from "@/constants/Colors";
 import { STRING_CONSTANTS } from "@/constants/strings";
 import { defaultStyles } from "@/constants/Styles";
+import { useSignIn } from "@clerk/clerk-expo";
 import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 import { useState } from "react";
 import { KeyboardAvoidingView, Platform, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 
@@ -17,10 +19,30 @@ const LoginPage = () => {
     phoneNumber: "",
   });
   const keyboardVeritalOffset = Platform.OS == 'ios' ? 90 : 0;
+  const router = useRouter();
+  const { signIn } = useSignIn();
 
   const onSignIn = async (type: SignInType) => {
     if(type === SignInType.Phone) {
+      try {
+        const fullPhoneNumber = `${form.countryCode}${form.phoneNumber}`
+        const { supportedFirstFactors } = await signIn!.create({
+          identifier: fullPhoneNumber
+        })
+        const firstPhoneFactor: any = supportedFirstFactors.find((factor: any) => {
+          return factor.strategy === 'phone_code';
+        })
+        const { phoneNumberId } = firstPhoneFactor;
 
+        await signIn!.prepareFirstFactor({
+          strategy: 'phone_code',
+          phoneNumberId
+        })
+
+        router.push({pathname : '/verify/[phone]', params: {phone: fullPhoneNumber, signin: 'true'}});
+      } catch(err) {
+
+      }
     }
   }
 

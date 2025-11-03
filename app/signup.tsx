@@ -1,7 +1,8 @@
 import Colors from "@/constants/Colors";
 import { STRING_CONSTANTS } from "@/constants/strings";
 import { defaultStyles } from "@/constants/Styles";
-import { Link } from "expo-router";
+import { useSignUp } from "@clerk/clerk-expo";
+import { Link, useRouter } from "expo-router";
 import { useState } from "react";
 import { KeyboardAvoidingView, Platform, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 //dummy push
@@ -11,9 +12,20 @@ const SignUp = () => {
     phoneNumber: "",
   });
   const keyboardVeritalOffset = Platform.OS == 'ios' ? 90 : 0;
+  const router = useRouter();
+  const { signUp } = useSignUp();
 
   const onSignUp = async () => {
-
+    const fullPhoneNumber = `${form.countryCode}${form.phoneNumber}`
+    router.push({pathname : '/verify/[phone]', params: {phone: fullPhoneNumber}});
+    try {
+      await signUp!.create({
+        phoneNumber: fullPhoneNumber
+      });
+      router.push({pathname : '/verify/[phone]', params: {phone: fullPhoneNumber}});
+    } catch(err) {
+      console.log('Error signing up', err)
+    }
   }
 
   return (
