@@ -1,14 +1,14 @@
 import Colors from "@/constants/Colors";
 import { STRING_CONSTANTS } from "@/constants/strings";
 import { defaultStyles } from "@/constants/Styles";
-import { useSignUp } from "@clerk/clerk-expo";
+import { isClerkAPIResponseError, useSignUp } from "@clerk/clerk-expo";
 import { Link, useRouter } from "expo-router";
 import { useState } from "react";
-import { KeyboardAvoidingView, Platform, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import { Alert, KeyboardAvoidingView, Platform, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 //dummy push
 const SignUp = () => {
   const [form, setForm] = useState({
-    countryCode: "+91",
+    countryCode: "+1",
     phoneNumber: "",
   });
   const keyboardVeritalOffset = Platform.OS == 'ios' ? 90 : 0;
@@ -17,14 +17,22 @@ const SignUp = () => {
 
   const onSignUp = async () => {
     const fullPhoneNumber = `${form.countryCode}${form.phoneNumber}`
-    router.push({pathname : '/verify/[phone]', params: {phone: fullPhoneNumber}});
+   
+    console.log('fullPhoneNumber',fullPhoneNumber)
     try {
       await signUp!.create({
         phoneNumber: fullPhoneNumber
       });
+      signUp!.preparePhoneNumberVerification();
       router.push({pathname : '/verify/[phone]', params: {phone: fullPhoneNumber}});
+      console.log('reached here router push failed ?')
     } catch(err) {
-      console.log('Error signing up', err)
+      console.log('Error signing up', err, err.errors[0].message)
+      if (isClerkAPIResponseError(err)) {
+          if (err.errors[0].code === 'form_identifier_not_found') {
+            Alert.alert('Error', err.errors[0].message);
+          }
+        }
     }
   }
 

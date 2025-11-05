@@ -15,7 +15,7 @@ enum SignInType {
 }
 const LoginPage = () => {
   const [form, setForm] = useState({
-    countryCode: "+91",
+    countryCode: "+17",
     phoneNumber: "",
   });
   const keyboardVeritalOffset = Platform.OS == 'ios' ? 90 : 0;
@@ -29,7 +29,7 @@ const LoginPage = () => {
         const { supportedFirstFactors } = await signIn!.create({
           identifier: fullPhoneNumber
         })
-        const firstPhoneFactor: any = supportedFirstFactors.find((factor: any) => {
+        const firstPhoneFactor: any = supportedFirstFactors!.find((factor: any) => {
           return factor.strategy === 'phone_code';
         })
         const { phoneNumberId } = firstPhoneFactor;
